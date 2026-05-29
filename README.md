@@ -1,14 +1,10 @@
-# Astro Starter Kit: Basics
+# Physio Himmelblau
 
-```sh
-pnpm create astro@latest -- --template basics
-```
+Dies ist das Repository für die Physio Himmelblau Website, erstellt mit Astro.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## 🚀 Projektstruktur
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
+Innerhalb deines Astro-Projekts findest du folgende Ordner und Dateien:
 
 ```text
 /
@@ -23,24 +19,39 @@ Inside of your Astro project, you'll see the following folders and files:
 │   │   └── Layout.astro
 │   └── pages
 │       └── index.astro
-└── package.json
+├── package.json
+└── deploy.txt
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## 🧞 Befehle
 
-## 🧞 Commands
+Alle Befehle werden aus dem Stammverzeichnis des Projekts über das Terminal ausgeführt:
 
-All commands are run from the root of the project, from a terminal:
+| Befehl            | Aktion                                           |
+| :---------------- | :----------------------------------------------- |
+| `pnpm install`    | Installiert die Abhängigkeiten                  |
+| `pnpm dev`        | Startet den lokalen Dev-Server (localhost:4321)  |
+| `pnpm build`      | Erstellt die Produktionsseite in `./dist/`      |
+| `pnpm deploy`     | **Baut die Seite und lädt sie zu Hostpoint hoch** |
+| `pnpm preview`    | Lokale Vorschau des Builds                      |
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+## 📦 Deployment (Hostpoint)
 
-## 👀 Want to learn more?
+Das Deployment erfolgt automatisiert via WinSCP.
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+### Voraussetzungen
+Um das Deployment von deinem Rechner aus zu starten, müssen folgende Bedingungen erfüllt sein:
+
+1.  **WinSCP**: Muss installiert sein (Standardpfad: `C:\Program Files (x86)\WinSCP`).
+2.  **SSH Key**: Dein privater Schlüssel (`id_ed25519`) muss im Ordner `%USERPROFILE%\.ssh\` liegen.
+3.  **Zugriff**: Dein öffentlicher Schlüssel muss im Hostpoint Control Panel hinterlegt sein.
+
+### Ausführung
+```sh
+pnpm deploy
+```
+Dieser Befehl führt zuerst `pnpm build` aus und startet anschließend das WinSCP-Skript (`deploy.txt`), welches die Dateien auf den Server überträgt.
+
+## 👀 Dokumentation
+
+Weitere Informationen zu Astro findest du in der [offiziellen Dokumentation](https://docs.astro.build).

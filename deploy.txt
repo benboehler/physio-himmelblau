@@ -1,6 +1,6 @@
 option batch on
 option confirm off
-open sftp://creaocch@sl272.web.hostpoint.ch/ -hostkey="ssh-ed25519 255 hHhoEyBT95m3Zfb147F76BltiqqEqa7yjdx4zwVAsrk" -privatekey="C:\Users\ben24\.ssh\id_ed25519"
+open sftp://creaocch@sl272.web.hostpoint.ch/ -hostkey="ssh-ed25519 255 hHhoEyBT95m3Zfb147F76BltiqqEqa7yjdx4zwVAsrk" -privatekey="%USERPROFILE%\.ssh\id_ed25519"
 lcd "dist"
 cd /home/creaocch/www/physio-himmelblau.ch/
 put -nopreservetime -nopermissions *

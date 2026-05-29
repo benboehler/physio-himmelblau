@@ -9,7 +9,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "deploy": "pnpm build && \"C:\\Program Files (x86)\\WinSCP\\WinSCP.com\" /script=deploy.txt /log=winscp_log.txt",
+    "deploy": "pnpm build && \"%ProgramFiles(x86)%\\WinSCP\\WinSCP.com\" /script=deploy.txt /log=winscp_log.txt",
     "astro": "astro"
   },
   "dependencies": {

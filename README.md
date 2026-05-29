@@ -32,7 +32,7 @@ Alle Befehle werden aus dem Stammverzeichnis des Projekts über das Terminal aus
 | `pnpm install`    | Installiert die Abhängigkeiten                  |
 | `pnpm dev`        | Startet den lokalen Dev-Server (localhost:4321)  |
 | `pnpm build`      | Erstellt die Produktionsseite in `./dist/`      |
-| `pnpm deploy`     | **Baut die Seite und lädt sie zu Hostpoint hoch** |
+| `pnpm host-deploy` | **Baut die Seite und lädt sie zu Hostpoint hoch** |
 | `pnpm preview`    | Lokale Vorschau des Builds                      |
 
 ## 📦 Deployment (Hostpoint)
@@ -48,9 +48,11 @@ Um das Deployment von deinem Rechner aus zu starten, müssen folgende Bedingunge
 
 ### Ausführung
 ```sh
-pnpm deploy
+pnpm host-deploy
 ```
 Dieser Befehl führt zuerst `pnpm build` aus und startet anschließend das WinSCP-Skript (`deploy.txt`), welches die Dateien auf den Server überträgt.
+
+> **Hinweis:** Wir verwenden `host-deploy`, da `pnpm deploy` ein reservierter interner Befehl von pnpm ist. Alternativ würde auch `pnpm run deploy` funktionieren, falls der Name in der `package.json` wieder auf `deploy` geändert wird.
 
 ## 👀 Dokumentation
 

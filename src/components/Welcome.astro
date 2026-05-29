@@ -7,15 +7,15 @@ import background from '../assets/background.svg';
 	<img id="background" src={background.src} alt="" fetchpriority="high" />
 	<main>
 		<section id="hero">
-			<a href="https://creaocchio.ch/"
-				><img src={creaocchioLogo.src} width="350" height="48" alt="Astro Homepage" /></a
-			>
 			<h1>
 				Webseite derzeit in Bearbeitung
 			</h1>
 			<h2>
 				Bitte schauen Sie später noch einmal vorbei
 			</h2>
+			<a href="https://creaocchio.ch/" target="_blank" rel="noopener noreferrer"
+			><img src={creaocchioLogo.src} width="350" height="48" alt="Astro Homepage" /></a
+			>
 		</section>
 	</main>
 </div>
@@ -44,7 +44,7 @@ import background from '../assets/background.svg';
 
 	#hero {
 		display: flex;
-		align-items: start;
+		align-items: center;
 		flex-direction: column;
 		justify-content: center;
 		padding: 16px;

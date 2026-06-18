@@ -155,7 +155,7 @@
             window.addEventListener('resize', () => setTimeout(calculateHeight, 200));
         });
 
-        const navLinks = document.querySelectorAll('nav a[href*="#"]');
+        const navLinks = document.querySelectorAll('nav a[href*="#"], footer a[href*="#"]');
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 const href = link.getAttribute('href');
@@ -189,12 +189,13 @@
                                 ease: "power2.inOut" 
                             });
                         } else {
+                            const offset = isLastPanel ? 50 : 0;
                             gsap.to(window, {
                                 duration: 0.3,
                                 scrollTo: {
                                     y: targetElement,
-                                    offsetY: 0
-                                }, 
+                                    offsetY: offset
+                                },
                                 ease: "power2.inOut" 
                             });
                         }

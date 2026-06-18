@@ -55,32 +55,29 @@
 <script>
     import { gsap } from 'gsap';
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
+    import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 
-    gsap.registerPlugin(ScrollTrigger);
+    gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
     function initPinnedPanels() {
         const panels = gsap.utils.toArray<HTMLElement>(".section");
         if (panels.length === 0) return;
 
-        // Wir pinnen alle außer dem letzten Panel
         const panelsToPin = panels.slice(0, -1);
 
         panelsToPin.forEach((panel) => {
             const innerpanel = panel.querySelector<HTMLElement>(".section-inner");
             if (!innerpanel) return;
 
-            // Erhöhte Verzögerung und mehrmalige Prüfung für dynamische Inhalte
             const calculateHeight = () => {
-                const panelHeight = innerpanel.scrollHeight; // scrollHeight ist oft genauer für Überhang
+                const panelHeight = innerpanel.scrollHeight;
                 const windowHeight = window.innerHeight;
                 const difference = panelHeight - windowHeight;
 
-                // ratio für fake-scrolling
                 const fakeScrollRatio = difference > 0 ? (difference / (difference + windowHeight)) : 0;
 
                 console.log(`Panel: ${panel.className}, Height: ${panelHeight}, Window: ${windowHeight}, Diff: ${difference}`);
 
-                // Bestehende Animationen auf dem Trigger killen, um Duplikate zu vermeiden
                 ScrollTrigger.getAll().filter(st => st.trigger === panel).forEach(st => st.kill());
 
                 if (fakeScrollRatio) {
@@ -143,6 +140,62 @@
             // Refresh bei Window Resize mit Debounce oder einfacher Verzögerung
             window.addEventListener('resize', () => setTimeout(calculateHeight, 200));
         });
+
+        const navLinks = document.querySelectorAll('nav a[href*="#"]');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+                if (!href) return;
+                
+                const targetId = href.split('#')[1];
+                if (!targetId && href !== '/#') return;
+
+                if (!targetId || targetId === "") {
+                    e.preventDefault();
+                    gsap.to(window, { duration: 0.7, scrollTo: 0, ease: "power2.inOut" });
+                    return;
+                }
+
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    e.preventDefault();
+                    
+                    const section = targetElement.closest('.section');
+                    
+                    if (section) {
+                        const panels = document.querySelectorAll('.section');
+                        const isLastPanel = panels[panels.length - 1] === section;
+
+                        const st = ScrollTrigger.getAll().find(s => s.trigger === section);
+                        
+                        if (st && !isLastPanel) {
+                            gsap.to(window, { 
+                                duration: 0.3,
+                                scrollTo: st.start + 1,
+                                ease: "power2.inOut" 
+                            });
+                        } else {
+                            gsap.to(window, {
+                                duration: 0.3,
+                                scrollTo: {
+                                    y: targetElement,
+                                    offsetY: 0
+                                }, 
+                                ease: "power2.inOut" 
+                            });
+                        }
+                    } else {
+                        gsap.to(window, {
+                            duration: 0.3,
+                            scrollTo: targetElement, 
+                            ease: "power2.inOut" 
+                        });
+                    }
+                }
+            });
+        });
+
+        setTimeout(() => ScrollTrigger.refresh(), 1100);
     }
 
     // Initialisierung bei jedem Seitenwechsel

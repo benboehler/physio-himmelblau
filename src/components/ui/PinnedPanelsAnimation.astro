@@ -22,6 +22,12 @@
         background: transparent;
     }
 
+    .section:last-of-type {
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
+    }
+
     .section-content {
         width: 100%;
         height: 100%;
@@ -63,17 +69,25 @@
         const panels = gsap.utils.toArray<HTMLElement>(".section");
         if (panels.length === 0) return;
 
-        const panelsToPin = panels.slice(0, -1);
-
-        panelsToPin.forEach((panel) => {
+        panels.forEach((panel) => {
             const innerpanel = panel.querySelector<HTMLElement>(".section-inner");
             if (!innerpanel) return;
 
             const calculateHeight = () => {
                 const panelHeight = innerpanel.scrollHeight;
                 const windowHeight = window.innerHeight;
-                const difference = panelHeight - windowHeight;
+                
+                const isLastPanel = panels[panels.length - 1] === panel;
+                
+                if (isLastPanel) {
+                    panel.style.height = "auto";
+                    panel.style.minHeight = "100vh";
+                    panel.style.overflow = "visible";
+                    ScrollTrigger.getAll().filter(st => st.trigger === panel).forEach(st => st.kill());
+                    return; 
+                }
 
+                const difference = panelHeight - windowHeight;
                 const fakeScrollRatio = difference > 0 ? (difference / (difference + windowHeight)) : 0;
 
                 console.log(`Panel: ${panel.className}, Height: ${panelHeight}, Window: ${windowHeight}, Diff: ${difference}`);

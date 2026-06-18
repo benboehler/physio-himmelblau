@@ -1,0 +1,48 @@
+---
+import portraitHoch from '../../assets/ueberMichPortrait.png';
+---
+
+<div class="flex justify-center items-center mt-12 mb-4">
+    <h1 class="text-4xl">über mich</h1>
+</div>
+<div class="grid grid-cols-12 gap-4 mb-20">
+    <div class="col-span-12 md:col-span-4">
+        <div class="flex flex-col gap-4">
+            <div class="h-96 md:h-128">
+                <img class="animate-image w-full h-full object-cover rounded-3xl" src={portraitHoch.src}
+                     alt="Portrait" fetchpriority="high"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-span-12 md:col-span-8">
+        <h4 class="text-xl font-bold mt-3">Martina Kaufmann</h4>
+        <p class="text-lg mb-8">
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+            labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
+            et ea rebum.
+        </p>
+        <p class="text-lg mb-8">
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+            labore et dolore magna aliquyam erat, sed diam voluptua.
+        </p>
+
+        <h5 class="text-lg font-bold">Ausbildung</h5>
+        <div>
+            <ul class="list-none list-inside text-foreground text-lg mb-8">
+                <li>Ausbildung 1</li>
+                <li>Ausbildung 2</li>
+                <li>Ausbildung 3</li>
+            </ul>
+        </div>
+
+        <h5 class="text-lg font-bold">Berufliche Weiterbildungen</h5>
+        <div>
+            <ul class="list-none list-inside text-foreground text-lg mb-8">
+                <li>Weiterbildung 1</li>
+                <li>Weiterbildung 2</li>
+                <li>Weiterbildung 3</li>
+            </ul>
+        </div>
+    </div>
+</div>

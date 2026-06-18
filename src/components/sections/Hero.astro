@@ -1,0 +1,24 @@
+---
+import portrait from '../../assets/homePortrait.png';
+import runner from '../../assets/oneLineRun.jpg';
+import ImageCard from '../ui/ImageCard.astro';
+---
+
+<div class="grid grid-cols-12 gap-4 mb-20">
+    <div class="col-span-12 md:col-span-8">
+        <ImageCard
+            src={portrait.src}
+            alt="Portrait"
+            text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum."
+        />
+    </div>
+
+    <div class="col-span-12 md:col-span-4">
+        <ImageCard
+            src={runner.src}
+            alt="Runner"
+            text="Deiner Gesundheit zu Liebe."
+            imgClass="h-96 md:h-96"
+        />
+    </div>
+</div>

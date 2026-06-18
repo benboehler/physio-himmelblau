@@ -1,0 +1,26 @@
+---
+interface Props {
+    src: string;
+    alt: string;
+    text?: string;
+    class?: string;
+    imgClass?: string;
+    aspectRatio?: string;
+}
+
+const { src, alt, text, class: className, imgClass = "h-64 md:h-96", aspectRatio = "object-cover" } = Astro.props;
+---
+
+<div class:list={["flex flex-col gap-4", className]}>
+    <div class={imgClass}>
+        <img class:list={["animate-image w-full h-full rounded-3xl", aspectRatio]} src={src}
+             alt={alt} fetchpriority="high"/>
+    </div>
+    {text && (
+        <div>
+            <p class="text-lg text-center">
+                {text}
+            </p>
+        </div>
+    )}
+</div>

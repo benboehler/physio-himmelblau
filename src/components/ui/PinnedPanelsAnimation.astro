@@ -1,0 +1,158 @@
+---
+/**
+ * PinnedPanelsAnimation.astro
+ * Implementiert Layered Pinning mit Skalierung und Fade-Out.
+ * Unterstützt Inhalte, die länger als der Viewport sind.
+ */
+---
+
+<style is:global>
+    .slides-wrapper {
+        position: relative;
+    }
+
+    .section {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        position: relative;
+        box-sizing: border-box;
+        overflow: hidden;
+        background: transparent;
+    }
+
+    .section-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .section-inner {
+        width: 100%;
+        max-width: 1152px; /* max-w-6xl */
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Spezialfall für Sektionen mit mehr Inhalt */
+    .section.has-scroll .section-inner {
+        height: auto;
+    }
+    
+    .section.has-scroll {
+        overflow: visible;
+    }
+</style>
+
+<script>
+    import { gsap } from 'gsap';
+    import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    function initPinnedPanels() {
+        const panels = gsap.utils.toArray<HTMLElement>(".section");
+        if (panels.length === 0) return;
+
+        // Wir pinnen alle außer dem letzten Panel
+        const panelsToPin = panels.slice(0, -1);
+
+        panelsToPin.forEach((panel) => {
+            const innerpanel = panel.querySelector<HTMLElement>(".section-inner");
+            if (!innerpanel) return;
+
+            // Erhöhte Verzögerung und mehrmalige Prüfung für dynamische Inhalte
+            const calculateHeight = () => {
+                const panelHeight = innerpanel.scrollHeight; // scrollHeight ist oft genauer für Überhang
+                const windowHeight = window.innerHeight;
+                const difference = panelHeight - windowHeight;
+
+                // ratio für fake-scrolling
+                const fakeScrollRatio = difference > 0 ? (difference / (difference + windowHeight)) : 0;
+
+                console.log(`Panel: ${panel.className}, Height: ${panelHeight}, Window: ${windowHeight}, Diff: ${difference}`);
+
+                // Bestehende Animationen auf dem Trigger killen, um Duplikate zu vermeiden
+                ScrollTrigger.getAll().filter(st => st.trigger === panel).forEach(st => st.kill());
+
+                if (fakeScrollRatio) {
+                    panel.style.marginBottom = difference + "px";
+                    panel.classList.add('has-scroll');
+                } else {
+                    panel.classList.remove('has-scroll');
+                    panel.style.marginBottom = "0px";
+                }
+
+                let tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: panel,
+                        start: "bottom bottom",
+                        end: () => fakeScrollRatio ? `+=${difference + windowHeight}` : "bottom top",
+                        pinSpacing: false,
+                        pin: true,
+                        scrub: true,
+                        invalidateOnRefresh: true
+                    }
+                });
+
+                if (fakeScrollRatio) {
+                    tl.to(innerpanel, {
+                        y: -difference,
+                        duration: 1 / (1 - fakeScrollRatio) - 1,
+                        ease: "none"
+                    });
+                }
+
+                tl.fromTo(panel, 
+                    { scale: 1, opacity: 1 }, 
+                    { scale: 0.9, opacity: 0, duration: 1, ease: "power1.inOut" }
+                );
+            };
+
+            // Initialer Check nach kurzem Timeout
+            setTimeout(calculateHeight, 100);
+            
+            // Zweiter Check nach längerem Timeout, falls Bilder geladen wurden
+            setTimeout(calculateHeight, 1000);
+
+            // Prüfung ob alle Bilder im Panel geladen sind
+            const images = panel.querySelectorAll('img');
+            if (images.length > 0) {
+                let loadedCount = 0;
+                images.forEach(img => {
+                    if (img.complete) {
+                        loadedCount++;
+                    } else {
+                        img.addEventListener('load', () => {
+                            loadedCount++;
+                            if (loadedCount === images.length) calculateHeight();
+                        });
+                    }
+                });
+                if (loadedCount === images.length) calculateHeight();
+            }
+            
+            // Refresh bei Window Resize mit Debounce oder einfacher Verzögerung
+            window.addEventListener('resize', () => setTimeout(calculateHeight, 200));
+        });
+    }
+
+    // Initialisierung bei jedem Seitenwechsel
+    document.addEventListener('astro:page-load', initPinnedPanels);
+    
+    if (!('astro:page-load' in document)) {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initPinnedPanels);
+        } else {
+            initPinnedPanels();
+        }
+    }
+</script>

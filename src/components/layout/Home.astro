@@ -3,13 +3,40 @@ import Hero from '../sections/Hero.astro';
 import Offer from '../sections/Offer.astro';
 import About from '../sections/About.astro';
 import Contact from '../sections/Contact.astro';
+import PinnedPanelsAnimation from '../ui/PinnedPanelsAnimation.astro';
 ---
 
-<div id="container" class="max-w-6xl w-full px-4 sm:mx-auto">
+<PinnedPanelsAnimation />
+
+<div id="container" class="w-full slides-wrapper">
     <main>
-        <Hero />
-        <Offer />
-        <About />
-        <Contact />
+        <section class="section">
+            <div class="section-content">
+                <div class="section-inner">
+                    <Hero />
+                </div>
+            </div>
+        </section>
+        <section class="section">
+            <div class="section-content">
+                <div class="section-inner">
+                    <Offer />
+                </div>
+            </div>
+        </section>
+        <section class="section">
+            <div class="section-content">
+                <div class="section-inner">
+                    <About />
+                </div>
+            </div>
+        </section>
+        <section class="section">
+            <div class="section-content">
+                <div class="section-inner">
+                    <Contact />
+                </div>
+            </div>
+        </section>
     </main>
 </div>

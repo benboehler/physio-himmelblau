@@ -5,10 +5,10 @@ import angebot3 from '../../assets/angebot3.jpg';
 import ImageCard from '../ui/ImageCard.astro';
 ---
 
-<div class="flex justify-center items-center mt-12 mb-4">
-    <h1 class="text-4xl mb-8">angebot</h1>
+<div id="angebot" class="flex justify-center items-center mt-12 mb-4">
+    <h1 class="text-4xl">angebot</h1>
 </div>
-<div class="grid grid-cols-12 gap-4 mb-20">
+<div class="grid grid-cols-12 gap-4 mt-12 mb-20">
     <div class="col-span-12 md:col-span-4">
         <ImageCard src={angebot1.src} alt="Angebot 1" text="Angebot 1" />
     </div>
@@ -17,5 +17,14 @@ import ImageCard from '../ui/ImageCard.astro';
     </div>
     <div class="col-span-12 md:col-span-4">
         <ImageCard src={angebot3.src} alt="Angebot 3" text="Angebot 3" />
+    </div>
+    <div class="col-span-12 md:col-span-4">
+        <ImageCard src={angebot1.src} alt="Angebot 4" text="Angebot 4" />
+    </div>
+    <div class="col-span-12 md:col-span-4">
+        <ImageCard src={angebot2.src} alt="Angebot 5" text="Angebot 5" />
+    </div>
+    <div class="col-span-12 md:col-span-4">
+        <ImageCard src={angebot3.src} alt="Angebot 6" text="Angebot 6" />
     </div>
 </div>

@@ -1,22 +1,30 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import Home from "../components/layout/Home.astro";
-import Layout from "../layouts/Layout.astro";
+import MaintenanceLayout from "../layouts/MaintenanceLayout.astro";
 import Maintenance from "../components/maintenance/Maintenance.astro";
+import FirstHome from "../components/layout/FirstHome.astro";
+import FirstLayout from "../layouts/FirstLayout.astro";
 ---
 
+<FirstLayout>
+	<FirstHome />
+</FirstLayout>
+
+<!--
 <MainLayout>
 	<Home />
 </MainLayout>
-
-<!--
-<Layout>
-	<Maintenance />
-</Layout>
 
 oder
 
-<MainLayout>
-	<Home />
-</MainLayout>
+<MaintenanceLayout>
+	<Maintenance />
+</MaintenanceLayout>
+
+oder
+
+<FirstLayout>
+	<FirstHome />
+</FirstLayout>
 -->

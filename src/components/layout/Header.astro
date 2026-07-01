@@ -1,20 +1,11 @@
 ---
-
+import logo from "../../assets/physio_himmelblau_web.png";
 ---
 
 <!-- ========== HEADER ========== -->
-<header
-        class="relative h-40 bg-[#4bc8ed]"
-        style="clip-path: polygon(0 0, 100% 0, 100% 86%, 80% 80%, 60% 78%, 40% 78%, 20% 80%, 0 86%);"
->
-    <nav class="flex h-28 items-center justify-center px-4">
-        <a
-                href="/"
-                aria-label="physio himmelblau"
-                class="text-4xl font-light tracking-wide text-white md:text-5xl"
-        >
-            physio himmelblau
-        </a>
-    </nav>
+<header class="w-full">
+    <a href="/" aria-label="physio himmelblau" class="block w-full">
+        <img src={logo.src} alt="physio himmelblau" class="w-full h-auto block" />
+    </a>
 </header>
 <!-- ========== END HEADER ========== -->

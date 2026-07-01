@@ -3,9 +3,13 @@ import logo from "../../assets/physio_himmelblau_web.png";
 ---
 
 <!-- ========== HEADER ========== -->
-<header class="w-full">
+<header class="w-full overflow-hidden">
     <a href="/" aria-label="physio himmelblau" class="block w-full">
-        <img src={logo.src} alt="physio himmelblau" class="w-full h-auto block" />
+        <img 
+            src={logo.src} 
+            alt="physio himmelblau" 
+            class="w-full h-32 object-cover object-center md:h-auto md:object-contain block" 
+        />
     </a>
 </header>
 <!-- ========== END HEADER ========== -->

@@ -1,7 +1,8 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Questrial&display=swap');
 
 @theme {
-  --font-century-gothic: "Century Gothic", "Apple Gothic", "ITC Avant Garde Gothic", sans-serif;
+  --font-century-gothic: "Questrial", "Century Gothic", "Apple Gothic", "ITC Avant Garde Gothic", sans-serif;
 }
 
 :root, body {

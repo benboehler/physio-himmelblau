@@ -5,8 +5,12 @@
   --font-century-gothic: "Questrial", "Century Gothic", "Apple Gothic", "ITC Avant Garde Gothic", sans-serif;
 }
 
-:root, body {
-  font-family: var(--font-century-gothic), sans-serif;
+:root, body, html {
+  font-family: "Questrial", "Century Gothic", "Apple Gothic", "ITC Avant Garde Gothic", sans-serif !important;
+}
+
+h1, h2, h3, h4, h5, h6, p, a, span, li, div {
+  font-family: "Questrial", "Century Gothic", "Apple Gothic", "ITC Avant Garde Gothic", sans-serif;
 }
 
 @source "./node_modules/preline/dist/*.js";

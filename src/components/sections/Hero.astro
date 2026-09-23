@@ -1,6 +1,6 @@
 ---
 import portrait from '../../assets/homePortrait.png';
-import runner from '../../assets/oneLineRun.jpg';
+import movementAnimation from '../../assets/physio-film.webp?url';
 import ImageCardHome from "../ui/ImageCardHome.astro";
 ---
 
@@ -15,10 +15,11 @@ import ImageCardHome from "../ui/ImageCardHome.astro";
 
     <div class="col-span-12 md:col-span-4">
         <ImageCardHome
-            src={runner.src}
-            alt="Runner"
+            src={movementAnimation}
+            alt="Eine Comicfigur hinkt mit Rückenschmerzen aus der Praxis und kommt fröhlich zurückgelaufen, macht einen Freudensprung und winkt."
             text="Deiner Gesundheit zu Liebe."
             imgClass="h-96 md:h-96"
+            aspectRatio="object-contain bg-[#e4f0ec]"
         />
     </div>
 </div>

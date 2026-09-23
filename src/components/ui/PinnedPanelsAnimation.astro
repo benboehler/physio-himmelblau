@@ -1,226 +1,59 @@
----
-/**
- * PinnedPanelsAnimation.astro
- * Implementiert Layered Pinning mit Skalierung und Fade-Out.
- * Unterstützt Inhalte, die länger als der Viewport sind.
- */
----
-
 <style is:global>
-    .slides-wrapper {
-        position: relative;
-    }
-
-    .section {
+    .slides-wrapper { position: relative; }
+    .slides-wrapper .section {
         width: 100%;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
+        min-height: 100svh;
         position: relative;
         box-sizing: border-box;
-        overflow: hidden;
-        background: transparent;
     }
-
-    .section:last-of-type {
-        height: auto;
-        min-height: 100vh;
-        overflow: visible;
-    }
-
-    .section-content {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-    }
-
+    .section-content { width: 100%; }
     .section-inner {
         width: 100%;
-        max-width: 1152px; /* max-w-6xl */
-        margin-left: auto;
-        margin-right: auto;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        min-height: 100%;
+        max-width: 1152px;
+        margin-inline: auto;
+        padding-inline: 1rem;
         display: flex;
         flex-direction: column;
         align-items: center;
-    }
-
-    /* Spezialfall für Sektionen mit mehr Inhalt */
-    .section.has-scroll .section-inner {
-        height: auto;
-    }
-    
-    .section.has-scroll {
-        overflow: visible;
     }
 </style>
 
 <script>
     import { gsap } from 'gsap';
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
-    import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
-
-    gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+    gsap.registerPlugin(ScrollTrigger);
+    let cleanup = () => {};
 
     function initPinnedPanels() {
-        const panels = gsap.utils.toArray<HTMLElement>(".section");
-        if (panels.length === 0) return;
-
-        panels.forEach((panel) => {
-            const innerpanel = panel.querySelector<HTMLElement>(".section-inner");
-            if (!innerpanel) return;
-
-            const calculateHeight = () => {
-                const panelHeight = innerpanel.scrollHeight;
-                const windowHeight = window.innerHeight;
-                
-                const isLastPanel = panels[panels.length - 1] === panel;
-                
-                if (isLastPanel) {
-                    panel.style.height = "auto";
-                    panel.style.minHeight = "100vh";
-                    panel.style.overflow = "visible";
-                    ScrollTrigger.getAll().filter(st => st.trigger === panel).forEach(st => st.kill());
-                    return; 
-                }
-
-                const difference = panelHeight - windowHeight;
-                const fakeScrollRatio = difference > 0 ? (difference / (difference + windowHeight)) : 0;
-
-                console.log(`Panel: ${panel.className}, Height: ${panelHeight}, Window: ${windowHeight}, Diff: ${difference}`);
-
-                ScrollTrigger.getAll().filter(st => st.trigger === panel).forEach(st => st.kill());
-
-                if (fakeScrollRatio) {
-                    panel.style.marginBottom = difference + "px";
-                    panel.classList.add('has-scroll');
-                } else {
-                    panel.classList.remove('has-scroll');
-                    panel.style.marginBottom = "0px";
-                }
-
-                let tl = gsap.timeline({
+        cleanup();
+        const panels = gsap.utils.toArray<HTMLElement>('.slides-wrapper .section');
+        const media = gsap.matchMedia();
+        media.add('(prefers-reduced-motion: no-preference)', () => {
+            panels.slice(0, -1).forEach((panel) => {
+                const content = panel.querySelector<HTMLElement>('.section-content');
+                if (!content) return;
+                // Tall panels scroll naturally before their bottom edge is pinned.
+                gsap.fromTo(content, { scale: 1, opacity: 1 }, {
+                    scale: 0.9, opacity: 0, ease: 'none',
                     scrollTrigger: {
                         trigger: panel,
-                        start: "bottom bottom",
-                        end: () => fakeScrollRatio ? `+=${difference + windowHeight}` : "bottom top",
+                        start: 'bottom bottom',
+                        end: () => '+=' + window.innerHeight,
+                        pin: panel,
                         pinSpacing: false,
-                        pin: true,
-                        scrub: true,
-                        invalidateOnRefresh: true
-                    }
+                        // Match the background's scroll catch-up time.
+                        scrub: 0.6,
+                        invalidateOnRefresh: true,
+                    },
                 });
-
-                if (fakeScrollRatio) {
-                    tl.to(innerpanel, {
-                        y: -difference,
-                        duration: 1 / (1 - fakeScrollRatio) - 1,
-                        ease: "none"
-                    });
-                }
-
-                tl.fromTo(panel, 
-                    { scale: 1, opacity: 1 }, 
-                    { scale: 0.9, opacity: 0, duration: 1, ease: "power1.inOut" }
-                );
-            };
-
-            // Initialer Check nach kurzem Timeout
-            setTimeout(calculateHeight, 100);
-            
-            // Zweiter Check nach längerem Timeout, falls Bilder geladen wurden
-            setTimeout(calculateHeight, 1000);
-
-            // Prüfung ob alle Bilder im Panel geladen sind
-            const images = panel.querySelectorAll('img');
-            if (images.length > 0) {
-                let loadedCount = 0;
-                images.forEach(img => {
-                    if (img.complete) {
-                        loadedCount++;
-                    } else {
-                        img.addEventListener('load', () => {
-                            loadedCount++;
-                            if (loadedCount === images.length) calculateHeight();
-                        });
-                    }
-                });
-                if (loadedCount === images.length) calculateHeight();
-            }
-            
-            // Refresh bei Window Resize mit Debounce oder einfacher Verzögerung
-            window.addEventListener('resize', () => setTimeout(calculateHeight, 200));
-        });
-
-        const navLinks = document.querySelectorAll('nav a[href*="#"], footer a[href*="#"]');
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                const href = link.getAttribute('href');
-                if (!href) return;
-                
-                const targetId = href.split('#')[1];
-                if (!targetId && href !== '/#') return;
-
-                if (!targetId || targetId === "") {
-                    e.preventDefault();
-                    gsap.to(window, { duration: 0.7, scrollTo: 0, ease: "power2.inOut" });
-                    return;
-                }
-
-                const targetElement = document.getElementById(targetId);
-                if (targetElement) {
-                    e.preventDefault();
-                    
-                    const section = targetElement.closest('.section');
-                    
-                    if (section) {
-                        const panels = document.querySelectorAll('.section');
-                        const isLastPanel = panels[panels.length - 1] === section;
-
-                        const st = ScrollTrigger.getAll().find(s => s.trigger === section);
-                        
-                        if (st && !isLastPanel) {
-                            gsap.to(window, { 
-                                duration: 0.3,
-                                scrollTo: st.start + 1,
-                                ease: "power2.inOut" 
-                            });
-                        } else {
-                            const offset = isLastPanel ? 50 : 0;
-                            gsap.to(window, {
-                                duration: 0.3,
-                                scrollTo: {
-                                    y: targetElement,
-                                    offsetY: offset
-                                },
-                                ease: "power2.inOut" 
-                            });
-                        }
-                    } else {
-                        gsap.to(window, {
-                            duration: 0.3,
-                            scrollTo: targetElement, 
-                            ease: "power2.inOut" 
-                        });
-                    }
-                }
             });
         });
-
-        setTimeout(() => ScrollTrigger.refresh(), 1100);
+        cleanup = () => media.revert();
+        ScrollTrigger.refresh();
     }
 
-    // Initialisierung bei jedem Seitenwechsel
+    initPinnedPanels();
     document.addEventListener('astro:page-load', initPinnedPanels);
-    
-    if (!('astro:page-load' in document)) {
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initPinnedPanels);
-        } else {
-            initPinnedPanels();
-        }
-    }
+    document.addEventListener('astro:before-swap', () => cleanup());
+    window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
 </script>

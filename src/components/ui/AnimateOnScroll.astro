@@ -7,7 +7,11 @@
 
     gsap.registerPlugin(ScrollTrigger);
 
+    let cleanup = () => {};
     const run = () => {
+        cleanup();
+        const media = gsap.matchMedia();
+        media.add('(prefers-reduced-motion: no-preference)', () => {
         const images = document.querySelectorAll('.animate-image');
         images.forEach((img) => {
             gsap.from(img, {
@@ -22,7 +26,12 @@
                 }
             });
         });
+        });
+        cleanup = () => media.revert();
     };
+
+    document.addEventListener('astro:page-load', run);
+    document.addEventListener('astro:before-swap', () => cleanup());
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', run, { once: true });

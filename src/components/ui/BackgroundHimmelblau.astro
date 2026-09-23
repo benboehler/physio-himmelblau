@@ -5,7 +5,7 @@
 ---
 
 <div class="background-wrapper">
-    <svg class="transition-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMin slice">
+    <svg class="transition-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
         <defs>
             <linearGradient id="grad" x1="0" y1="0" x2="99" y2="99" gradientUnits="userSpaceOnUse">
                 <stop offset="0.2" stop-color="rgb(85, 194, 231)" />
@@ -43,18 +43,24 @@
     
     gsap.registerPlugin(ScrollTrigger);
     
-    const path = document.querySelector(".morph-path");
-    
-    if (path) {
+    let cleanup = () => {};
+
+    function initBackground() {
+        cleanup();
+        const path = document.querySelector(".morph-path");
+        if (!path) return;
+        const media = gsap.matchMedia();
+        media.add('(prefers-reduced-motion: no-preference)', () => {
         const start = "M 0 0 V 50 Q 50 100 100 50 V 0 z";
         const end = "M 0 0 V 100 Q 50 100 100 100 V 0 z";
         
         let tl = gsap.timeline({
             scrollTrigger: {
-                trigger: "body",
-                start: "top top",
-                end: "80% top",
-                scrub: 2,
+                start: 0,
+                end: () => Math.max(1, ScrollTrigger.maxScroll(window)),
+                // Numeric scrub smooths scroll input with a short catch-up time.
+                scrub: 0.6,
+                invalidateOnRefresh: true,
             }
         });
         
@@ -66,5 +72,12 @@
             attr: { d: end },
             ease: "none"
         });
+        });
+        cleanup = () => media.revert();
     }
+
+    initBackground();
+    document.addEventListener('astro:page-load', initBackground);
+    document.addEventListener('astro:before-swap', () => cleanup());
+    window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
 </script>

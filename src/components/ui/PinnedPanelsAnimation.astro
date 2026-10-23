@@ -5,6 +5,8 @@
         min-height: 100svh;
         position: relative;
         box-sizing: border-box;
+        /* Keep the final lines above the fixed navigation before fading. */
+        padding-bottom: calc(var(--bottom-nav-height, 7rem) + 2rem);
     }
     .section-content { width: 100%; }
     .section-inner {
@@ -24,36 +26,85 @@
     gsap.registerPlugin(ScrollTrigger);
     let cleanup = () => {};
 
+    function restoreAnchor() {
+        ScrollTrigger.refresh();
+        const anchor = document.getElementById(window.location.hash.slice(1));
+        if (anchor?.closest('.slides-wrapper')) {
+            // Initial hash navigation can run before images and pins have their
+            // final dimensions. Restore it after layout has settled.
+            anchor.scrollIntoView({ behavior: 'instant', block: 'start' });
+        }
+    }
+
     function initPinnedPanels() {
         cleanup();
         const panels = gsap.utils.toArray<HTMLElement>('.slides-wrapper .section');
+        const navigation = document.querySelector<HTMLElement>('[data-bottom-navigation]');
+        let navigationHeight = 0;
+        const measureNavigation = () => {
+            const height = Math.ceil(navigation?.getBoundingClientRect().height ?? 0);
+            if (height === navigationHeight) return;
+            navigationHeight = height;
+            document.documentElement.style.setProperty('--bottom-nav-height', `${height}px`);
+            ScrollTrigger.refresh();
+        };
+        measureNavigation();
+        const navigationObserver = new ResizeObserver(measureNavigation);
+        if (navigation) navigationObserver.observe(navigation);
         const media = gsap.matchMedia();
         media.add('(prefers-reduced-motion: no-preference)', () => {
-            panels.slice(0, -1).forEach((panel) => {
+            panels.forEach((panel, index) => {
                 const content = panel.querySelector<HTMLElement>('.section-content');
                 if (!content) return;
+
+                // Reveal the next panel only after the previous fade completes.
+                const inner = panel.querySelector<HTMLElement>('.section-inner');
+                if (index > 0 && inner) {
+                    gsap.fromTo(inner, { autoAlpha: 0 }, {
+                        autoAlpha: 1,
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: panel,
+                            start: 'top 55%',
+                            end: 'top 40%',
+                            scrub: true,
+                            invalidateOnRefresh: true,
+                        },
+                    });
+                }
+
+                if (index === panels.length - 1) return;
                 // Tall panels scroll naturally before their bottom edge is pinned.
-                gsap.fromTo(content, { scale: 1, opacity: 1 }, {
-                    scale: 0.9, opacity: 0, ease: 'none',
+                const transition = gsap.timeline({
                     scrollTrigger: {
                         trigger: panel,
                         start: 'bottom bottom',
                         end: () => '+=' + window.innerHeight,
                         pin: panel,
                         pinSpacing: false,
-                        // Match the background's scroll catch-up time.
-                        scrub: 0.6,
+                        // Keep text tied to the scroll position, without delayed
+                        // ghosting after fast scrolling or anchor navigation.
+                        scrub: true,
                         invalidateOnRefresh: true,
                     },
                 });
+                transition
+                    .fromTo(content, { scale: 1 }, { scale: 0.96, duration: 0.8, ease: 'none' }, 0.2)
+                    // Leave a reading interval at full opacity, then fade over
+                    // 22% of the viewport. No incoming text overlaps this fade.
+                    .fromTo(content, { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.22, ease: 'none' }, 0.2);
             });
         });
-        cleanup = () => media.revert();
+        cleanup = () => {
+            navigationObserver.disconnect();
+            media.revert();
+        };
         ScrollTrigger.refresh();
+        if (document.readyState === 'complete') restoreAnchor();
     }
 
     initPinnedPanels();
     document.addEventListener('astro:page-load', initPinnedPanels);
     document.addEventListener('astro:before-swap', () => cleanup());
-    window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+    window.addEventListener('load', restoreAnchor, { once: true });
 </script>

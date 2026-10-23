@@ -16,6 +16,14 @@ h1, h2, h3, h4, h5, h6, p, a, span, li, div {
 
 @source "../../node_modules/preline/dist/*.js";
 
+html {
+  scroll-padding-bottom: calc(var(--bottom-nav-height, 7rem) + 1.5rem);
+}
+
+body > footer {
+  padding-bottom: calc(var(--bottom-nav-height, 7rem) + 2rem);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html, body { scroll-behavior: auto !important; }
 }

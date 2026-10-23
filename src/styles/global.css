@@ -4,6 +4,10 @@
   --font-century-gothic: "Questrial", "Century Gothic", "Apple Gothic", "ITC Avant Garde Gothic", sans-serif;
 }
 
+:root {
+  --bottom-nav-height: 7rem;
+}
+
 :root, body, html {
   font-family: "Questrial", "Century Gothic", "Apple Gothic", "ITC Avant Garde Gothic", sans-serif !important;
   overflow-x: clip;
